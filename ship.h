@@ -1,8 +1,8 @@
 /** @file   ship.h
  *  @author Corey Hines, Ethan Field
  *  @date   14 October 2024
- *  @brief   This file defines the structures and functions for 
- *           handling ship creation and manipulation.
+ *  @brief  This file defines the structures and functions for 
+ *          handling ship creation, manipulation, and destruction in the game.
  */
 
 #include <stdint.h>
@@ -15,24 +15,20 @@
 
 /**
  * @typedef Orientation_t
- * @brief   Type definition for representing ship orientation.
+ * @brief   Type definition for representing ship orientation (horizontal or vertical).
  */
 typedef uint8_t Orientation_t;
 
 /**
- * @struct Ship_t
- * @brief  Represents a ship with its attributes.
+ * @struct ShipPoint_t
+ * @brief  Represents a point on a ship.
  */
 typedef struct
 {
-    Orientation_t orientation;
-    uint8_t length;
-    uint8_t x_top;
-    uint8_t x_bottom;
-    uint8_t y_top;
-    uint8_t y_bottom;
-    bool sunk;
-} Ship_t;
+    uint8_t x_coord;
+    uint8_t y_coord;
+    bool hit;
+} ShipPoint_t;
 
 /**
  * @enum  ShipType_t
@@ -45,11 +41,30 @@ typedef enum
 } ShipType_t;
 
 /**
- * @brief Creates a ship object with the specified parameters.
- * @param orientation The orientation of the ship (horizontal or vertical).
- * @param length The length/type of the ship.
- * @param x_top The x-coordinate of the top of the ship.
- * @param y_top The y-coordinate of the top of the ship.
- * @return A Ship_t object with its attributes initialized.
+ * @struct Ship_t
+ * @brief  Represents a ship with a set orientation, type, and its points on the grid.
  */
-Ship_t ship_create(Orientation_t orientation, ShipType_t length, uint8_t x_top,  uint8_t y_top);
+typedef struct
+{
+    Orientation_t orientation;
+    ShipType_t type;
+    ShipPoint_t* points;
+} Ship_t;
+
+/**
+ * @brief  Creates a ship object with the specified parameters.
+ * @param  orientation The orientation of the ship (horizontal or vertical).
+ * @param  type The type of the ship, which determines its length (either SMALL or LARGE).
+ * @param  x_top The x-coordinate of the topmost (or leftmost) part of the ship.
+ * @param  y_top The y-coordinate of the topmost (or leftmost) part of the ship.
+ * @return A dynamically allocated Ship_t object with initialized attributes.
+ */
+Ship_t* ship_create(Orientation_t orientation, ShipType_t type, uint8_t x_top,  uint8_t y_top);
+
+/**
+ * @brief Removes a ship object with the specified parameters.
+ * @param ship The Ship_t object to be removed.
+ */
+void ship_remove(Ship_t* ship);
+
+bool ship_sunk(Ship_t* ship);
