@@ -1,3 +1,10 @@
+/** @file   ship.c
+ *  @author Corey Hines, Ethan Field
+ *  @date   14 October 2024
+ *  @brief  This file defines the structures and functions for 
+ *          handling ship creation, manipulation, and destruction in the game.
+ */
+
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>

@@ -25,8 +25,11 @@ system.o: ../../drivers/avr/system.c ../../drivers/avr/system.h
 ship.o: ship.c ship.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
+board.o: board.c board.h
+	$(CC) -c $(CFLAGS) $< -o $@
+
 # Link: create ELF output file from object files.
-game.out: game.o system.o ship.o
+game.out: game.o system.o ship.o board.o
 	$(CC) $(CFLAGS) $^ -o $@ -lm
 	$(SIZE) $@
 

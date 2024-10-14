@@ -5,6 +5,9 @@
  *          handling ship creation, manipulation, and destruction in the game.
  */
 
+#ifndef SHIP_H
+#define SHIP_H
+
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -67,4 +70,11 @@ Ship_t* ship_create(Orientation_t orientation, ShipType_t type, uint8_t x_top,  
  */
 void ship_remove(Ship_t* ship);
 
+/**
+ * @brief  Checks if a ship has been completely sunk.
+ * @param  ship A pointer to the Ship_t object to check.
+ * @return true if all points of the ship have been hit (ship is sunk), false otherwise.
+ */
 bool ship_sunk(Ship_t* ship);
+
+#endif /* SHIP_H */
