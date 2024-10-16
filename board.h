@@ -39,4 +39,7 @@ BoardResponse_t board_check_our_shot_their_board(uint8_t row, uint8_t col);
 extern Board_t* our_board;
 extern Board_t* their_board;
 
+extern uint8_t our_predefined_board_id;
+extern uint8_t their_predefined_board_id;
+
 #endif

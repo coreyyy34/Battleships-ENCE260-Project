@@ -5,6 +5,9 @@
 Board_t* our_board = NULL;
 Board_t* their_board = NULL;
 
+uint8_t our_predefined_board_id = NULL;
+uint8_t their_predefined_board_id = NULL;
+
 Board_t* create_board(const PredefinedBoard_t* predefined_board)
 {
     Board_t* new_board = (Board_t*) malloc(sizeof(Board_t));

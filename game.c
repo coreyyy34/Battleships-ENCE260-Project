@@ -8,12 +8,17 @@
 #include "message.h"
 #include "board.h"
 #include "predefined_boards.h"
+#include "ir.h"
 #include "util.h"
 
 #define PACER_RATE 500  // pacer ticks per second
 
 static GameState_t prev_game_state = GAME_STATE_TITLE_SCREEN;
 static GameState_t game_state = GAME_STATE_TITLE_SCREEN;
+
+bool received_their_board = false;
+bool sent_our_board = false;
+uint8_t player_number;
 
 static void set_game_state(GameState_t new_game_state)
 {
@@ -46,6 +51,7 @@ static void update_select_player(void)
     {
         set_game_state(GAME_STATE_CHOOSE_BOARD);
         initialised = false;
+        player_number = player ? 2 : 1;
     }
 }
 
@@ -77,8 +83,10 @@ static void update_choose_board(void)
     {
         // debug set their board to the one we choose when using 1 board
         our_board = create_board(PREDEFINED_BOARDS[board_num]);
-        their_board = create_board(PREDEFINED_BOARDS[board_num]);
-        set_game_state(GAME_STATE_SELECT_SHOOT_POSITION);
+        our_predefined_board_id = board_num;
+        set_game_state(GAME_STATE_AWAIT_BOARD_EXCHANGE);
+        ir_send_our_predefined_board_id(our_predefined_board_id);
+        sent_our_board = true;
         initialised = false;
     }
 }
@@ -105,6 +113,72 @@ static void update_scrolling_message(char* message, GameState_t finish_state)
         initialised = false;
     }
 }
+
+static void update_receive_their_board(void)
+{
+    if (!received_their_board)
+    {
+        if (ir_get_their_predefined_board_id(&their_predefined_board_id))
+        {
+            received_their_board = true;
+            // message_clear();
+            // message_char(their_predefined_board_id + '0');
+        }
+    // if we have received their board and sent ours, go to the start state
+    } else if (sent_our_board) {
+        set_game_state(GAME_STATE_SELECT_SHOOT_POSITION);
+        message_char(their_predefined_board_id + '0');
+    }
+}
+
+// static void update_exchange_board(void)
+// {
+//     if (player_number == 1 && !received_their_board)
+//     {
+//         if (ir_get_their_predefined_board_id(&their_predefined_board_id))
+//         {
+//             received_their_board = true;
+//         }
+//     }
+//     if (player_number == 2 && !received_their_board)
+//     {
+
+//     }
+
+
+//     // If we haven't received their board yet, either send or listen
+//     if (!received_their_board)
+//     {
+//         // Keep sending our predefined board ID for 1 second (500 iterations)
+//         ir_send_our_predefined_board_id(our_predefined_board_id);
+//     {
+//             // After sending for 1 second, start listening for the opponent's board
+//             if (ticks_after_send == 0 && ir_get_their_predefined_board_id(&their_predefined_board_id))
+//             {
+//                 received_their_board = true;
+//             }
+//         }
+//     }
+
+//     // Once both boards have been exchanged, proceed to the next game state
+//     if (received_their_board)
+//     {
+//         set_game_state(GAME_STATE_SELECT_SHOOT_POSITION);
+//         message_clear();
+//         message_char(their_predefined_board_id + '0');
+//         // show their board on our display
+//         // message_display_pre_defined_board(PREDEFINED_BOARDS[their_predefined_board_id]);
+//     }
+
+//     // Decrease the ticks for the delay after sending
+//     if (ticks_after_send > 0)
+//     {
+//         ticks_after_send--;
+//     }
+// }
+
+
+
 
 static void update_select_shoot_position(void)
 {
@@ -207,6 +281,7 @@ int main(void)
     pacer_init(PACER_RATE);
     button_init ();
     message_init();
+    ir_uart_init();
 
     while (1)
     {
@@ -218,10 +293,16 @@ int main(void)
                 update_scrolling_message(" G ", GAME_STATE_SELECT_PLAYER);
                 break;
             case GAME_STATE_SELECT_PLAYER:
+                update_receive_their_board();
                 update_select_player();
                 break;
             case GAME_STATE_CHOOSE_BOARD:
+                update_receive_their_board();
                 update_choose_board();
+                break;
+            case GAME_STATE_AWAIT_BOARD_EXCHANGE:
+                update_receive_their_board();
+                // update_exchange_board();
                 break;
             case GAME_STATE_SELECT_SHOOT_POSITION:
                 update_select_shoot_position();
