@@ -4,6 +4,7 @@
 #include "pacer.h"
 #include "navswitch.h"
 #include "tinygl.h"
+#include "led.h"
 #include "game_state.h"
 #include "message.h"
 #include "board.h"
@@ -16,16 +17,51 @@
 static GameState_t prev_game_state = GAME_STATE_TITLE_SCREEN;
 static GameState_t game_state = GAME_STATE_TITLE_SCREEN;
 
-bool received_their_board = false;
-bool sent_our_board = false;
-uint8_t player_number;
+static char* scrolling_text = NULL;
+static GameState_t scrolling_finish_state = GAME_STATE_TITLE_SCREEN;
+
+static bool received_their_board = false;
+static bool sent_our_board = false;
+static uint8_t player_number;
 
 static void set_game_state(GameState_t new_game_state)
 {
     prev_game_state = game_state;
     game_state = new_game_state;
     message_clear();
-    // clear the message in between states 
+}
+
+static void set_scrolling_message(char* text, GameState_t finish_state)
+{
+    scrolling_text = text;
+    scrolling_finish_state = finish_state;
+    set_game_state(GAME_STATE_SHOWING_MESSAGE);
+}
+
+
+static void update_scrolling_message(void)
+{
+    static uint32_t ticks = 0;
+    static uint32_t total_ticks = 0;
+    static bool initialised = false;
+
+    if (!initialised) 
+    {
+        initialised = true;
+        ticks = 0;
+        total_ticks = message_calculate_scrolling_message_ticks(scrolling_text);
+        message_scrolling_message(scrolling_text);
+    }
+
+    if (ticks++ >= total_ticks)
+    {
+        pacer_wait();
+        set_game_state(scrolling_finish_state); 
+        ticks = 0;
+        total_ticks = 0;
+        initialised = false;
+        scrolling_text = NULL;
+    }
 }
 
 static void update_select_player(void)
@@ -81,35 +117,13 @@ static void update_choose_board(void)
     }
     if (button_push_event_p (0))
     {
-        // debug set their board to the one we choose when using 1 board
+        // setup our board and send the predefined board to the other board
         our_board = create_board(PREDEFINED_BOARDS[board_num]);
         our_predefined_board_id = board_num;
         set_game_state(GAME_STATE_AWAIT_BOARD_EXCHANGE);
+
         ir_send_our_predefined_board_id(our_predefined_board_id);
         sent_our_board = true;
-        initialised = false;
-    }
-}
-
-static void update_scrolling_message(char* message, GameState_t finish_state)
-{
-    static uint32_t ticks = 0;
-    static uint32_t total_ticks = 0;
-    static bool initialised = false;
-
-    if (!initialised) 
-    {
-        initialised = true;
-        total_ticks = message_calculate_scrolling_message_ticks(message);
-        message_scrolling_message(message);
-    }
-
-    if (ticks++ >= total_ticks)
-    {
-        pacer_wait();
-        set_game_state(finish_state);
-        ticks = 0;
-        total_ticks = 0;
         initialised = false;
     }
 }
@@ -121,64 +135,14 @@ static void update_receive_their_board(void)
         if (ir_get_their_predefined_board_id(&their_predefined_board_id))
         {
             received_their_board = true;
-            // message_clear();
-            // message_char(their_predefined_board_id + '0');
+            their_board = create_board(PREDEFINED_BOARDS[their_predefined_board_id]);
         }
-    // if we have received their board and sent ours, go to the start state
     } else if (sent_our_board) {
-        set_game_state(GAME_STATE_SELECT_SHOOT_POSITION);
-        message_char(their_predefined_board_id + '0');
+        // player 1 starts by sending a shot (selecting a shoot position initially)
+        // player 2 starts by waiting for player 1's shot
+        set_game_state(player_number == 1 ? GAME_STATE_SELECT_SHOOT_POSITION : GAME_STATE_THEIR_TURN);
     }
 }
-
-// static void update_exchange_board(void)
-// {
-//     if (player_number == 1 && !received_their_board)
-//     {
-//         if (ir_get_their_predefined_board_id(&their_predefined_board_id))
-//         {
-//             received_their_board = true;
-//         }
-//     }
-//     if (player_number == 2 && !received_their_board)
-//     {
-
-//     }
-
-
-//     // If we haven't received their board yet, either send or listen
-//     if (!received_their_board)
-//     {
-//         // Keep sending our predefined board ID for 1 second (500 iterations)
-//         ir_send_our_predefined_board_id(our_predefined_board_id);
-//     {
-//             // After sending for 1 second, start listening for the opponent's board
-//             if (ticks_after_send == 0 && ir_get_their_predefined_board_id(&their_predefined_board_id))
-//             {
-//                 received_their_board = true;
-//             }
-//         }
-//     }
-
-//     // Once both boards have been exchanged, proceed to the next game state
-//     if (received_their_board)
-//     {
-//         set_game_state(GAME_STATE_SELECT_SHOOT_POSITION);
-//         message_clear();
-//         message_char(their_predefined_board_id + '0');
-//         // show their board on our display
-//         // message_display_pre_defined_board(PREDEFINED_BOARDS[their_predefined_board_id]);
-//     }
-
-//     // Decrease the ticks for the delay after sending
-//     if (ticks_after_send > 0)
-//     {
-//         ticks_after_send--;
-//     }
-// }
-
-
-
 
 static void update_select_shoot_position(void)
 {
@@ -239,13 +203,15 @@ static void update_select_shoot_position(void)
         BoardResponse_t response = board_check_our_shot_their_board(row, col);
         if (response == HIT) 
         {
-            set_game_state(GAME_STATE_SHOOT_HIT_MESSAGE);
+            ir_send_our_turn_state(HIT);
+            set_scrolling_message(MESSAGE_HIT, GAME_STATE_THEIR_TURN);
             initialised = false;
             previous_shot = true;
         }
         if (response == MISS)
         {
-            set_game_state(GAME_STATE_SHOOT_MISS_MESSAGE);
+            ir_send_our_turn_state(MISS);
+            set_scrolling_message(MESSAGE_MISS, GAME_STATE_THEIR_TURN);
             initialised = true;
             previous_shot = true;
         }
@@ -275,6 +241,22 @@ static void update_select_shoot_position(void)
     }
 }
 
+static void update_receive_their_turn(void)
+{
+    BoardResponse_t response;
+    if (ir_get_their_turn_state(&response)) 
+    {
+        if (response == HIT)
+        {
+            set_scrolling_message(MESSAGE_HIT, GAME_STATE_SELECT_SHOOT_POSITION);
+        }
+        else if (response == MISS)
+        {
+            set_scrolling_message(MESSAGE_MISS, GAME_STATE_SELECT_SHOOT_POSITION);
+        }
+    }
+}
+
 int main(void)
 {
     system_init();
@@ -282,6 +264,8 @@ int main(void)
     button_init ();
     message_init();
     ir_uart_init();
+    led_init();
+    led_set(LED1, 0);
 
     while (1)
     {
@@ -290,7 +274,9 @@ int main(void)
         switch (game_state) 
         {
             case GAME_STATE_TITLE_SCREEN:
-                update_scrolling_message(" G ", GAME_STATE_SELECT_PLAYER);
+                // skip the title screen and go straight to choose player state for quick launch
+                // set_scrolling_message(" BATTLESHIPS ", GAME_STATE_SELECT_PLAYER);
+                set_game_state(GAME_STATE_SELECT_PLAYER);
                 break;
             case GAME_STATE_SELECT_PLAYER:
                 update_receive_their_board();
@@ -305,13 +291,15 @@ int main(void)
                 // update_exchange_board();
                 break;
             case GAME_STATE_SELECT_SHOOT_POSITION:
+                led_set(LED1, 0); /* turn the led off when its our turn */
                 update_select_shoot_position();
                 break;
-            case GAME_STATE_SHOOT_HIT_MESSAGE:
-                update_scrolling_message("HIT ", GAME_STATE_SELECT_SHOOT_POSITION);
+            case GAME_STATE_THEIR_TURN:
+                led_set(LED1, 1); /* turn the led on when its their turn to indicate they need to wait */
+                update_receive_their_turn();
                 break;
-            case GAME_STATE_SHOOT_MISS_MESSAGE:
-                update_scrolling_message("MISS ", GAME_STATE_SELECT_SHOOT_POSITION);
+            case GAME_STATE_SHOWING_MESSAGE:
+                update_scrolling_message();
                 break;
             default: 
                 break;

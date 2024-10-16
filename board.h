@@ -20,9 +20,9 @@ typedef enum
 
 typedef enum
 {
+    NONE,   /** Represents a cell has previously been discovered */
     MISS,   /** Represents a cell that was targeted but contained no ship. */
     HIT,    /** Represents a ship point that has been hit */
-    NONE,   /** Represents a cell has previously been discovered */
 } BoardResponse_t;
 
 typedef enum 

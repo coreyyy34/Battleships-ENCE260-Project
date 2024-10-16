@@ -10,6 +10,9 @@
 #define PIXEL_ON 1
 #define PIXEL_OFF 0
 
+#define MESSAGE_HIT " HIT "
+#define MESSAGE_MISS " MISS "
+
 uint32_t message_calculate_scrolling_message_ticks(const char* text);
 
 void message_scrolling_message(const char* text);
