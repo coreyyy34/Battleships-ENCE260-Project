@@ -318,6 +318,12 @@ int main(void)
             case GAME_STATE_SHOWING_MESSAGE:
                 update_scrolling_message();
                 break;
+            case GAME_STATE_VICTORY_MESSAGE:
+                update_scrolling_message("YOU WIN!", GAME_STATE_TITLE_SCREEN);
+                break;
+            case GAME_STATE_LOSS_MESSAGE:
+                update_scrolling_message("YOU LOSE!", GAME_STATE_TITLE_SCREEN);
+                break;
             default: 
                 break;
         }
