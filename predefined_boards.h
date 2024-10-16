@@ -2,21 +2,66 @@
 #define PREDEFINED_BOARDS_H
 
 #include "tinygl.h"
+#include "board.h"
 
-const tinygl_pixel_value_t BOARD_1[LEDMAT_ROWS_NUM][LEDMAT_COLS_NUM] = 
-{
-    {0, 0, 0, 0, 0},  // Row 1
-    {0, 1, 0, 0, 0},  // Row 2
-    {0, 1, 0, 0, 0},  // Row 3
-    {0, 1, 0, 0, 0},  // Row 4
-    {0, 0, 0, 0, 0},  // Row 5
-    {0, 0, 1, 1, 0},  // Row 6
-    {0, 0, 0, 0, 0}   // Row 7
+const PredefinedBoard_t BOARD_1 = {
+    {0, 0, 1, 1, 0},
+    {0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 1},
+    {0, 0, 0, 0, 1},
+    {1, 1, 0, 0, 0},
+    {0, 0, 0, 0, 0},
+    {0, 1, 1, 0, 0}
 };
 
-const uint8_t NUM_BOARDS = 1;
-const tinygl_pixel_value_t* BOARDS[] = {
-    (const tinygl_pixel_value_t*) BOARD_1
+const PredefinedBoard_t BOARD_2 = {
+    {0, 0, 0, 1, 1},
+    {0, 0, 0, 0, 0},
+    {0, 0, 1, 1, 0},
+    {0, 0, 0, 0, 0},
+    {0, 1, 0, 0, 1},
+    {0, 1, 0, 0, 0},
+    {0, 0, 0, 0, 0}
+};
+
+const PredefinedBoard_t BOARD_3 = {
+    {0, 0, 0, 0, 1},
+    {0, 0, 0, 0, 1},
+    {1, 0, 1, 0, 0},
+    {1, 0, 1, 0, 0},
+    {0, 0, 0, 1, 1},
+    {0, 0, 0, 0, 0},
+    {1, 1, 0, 0, 0}
+};
+
+const PredefinedBoard_t BOARD_4 = {
+    {0, 1, 0, 1, 0},
+    {0, 1, 0, 1, 0},
+    {0, 0, 0, 0, 0},
+    {1, 1, 0, 0, 0},
+    {0, 0, 0, 1, 1},
+    {0, 0, 0, 0, 0},
+    {1, 1, 0, 0, 0}
+};
+
+const PredefinedBoard_t BOARD_5 = {
+    {1, 0, 0, 0, 0},
+    {1, 0, 0, 0, 1},
+    {0, 0, 0, 0, 1},
+    {0, 0, 0, 1, 1},
+    {0, 1, 1, 0, 0},
+    {0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0}
+};
+
+const uint8_t NUM_BOARDS = 5;
+
+const PredefinedBoard_t* PREDEFINED_BOARDS[] = {
+    &BOARD_1,
+    &BOARD_2,
+    &BOARD_3,
+    &BOARD_4,
+    &BOARD_5
 };
 
 #endif

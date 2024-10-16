@@ -19,6 +19,8 @@ uint32_t message_calculate_scrolling_message_ticks(const char* text)
 
 void message_scrolling_message(const char* text)
 {
+    message_init();
+    tinygl_clear();
     tinygl_text_mode_set(TINYGL_TEXT_MODE_SCROLL);
     tinygl_text(text);
 }
@@ -26,6 +28,8 @@ void message_scrolling_message(const char* text)
 void message_char(char character)
 {
     char text[2] = {character, '\0'}; 
+    message_init();
+    tinygl_clear();
     tinygl_text_mode_set(TINYGL_TEXT_MODE_STEP);
     tinygl_text(text);
 }
@@ -37,14 +41,41 @@ void message_init(void)
     tinygl_text_speed_set(MESSAGE_RATE);
 }
 
-void message_display_board(const tinygl_pixel_value_t board[LEDMAT_ROWS_NUM][LEDMAT_COLS_NUM])
-{
+void message_display_pre_defined_board(const PredefinedBoard_t* board) {
+    message_init();
+    tinygl_clear();
     for (tinygl_coord_t row = 0; row < LEDMAT_ROWS_NUM; row++) 
     {
         for (tinygl_coord_t col = 0; col < LEDMAT_COLS_NUM; col++) 
         {
             tinygl_point_t pos = {col, row};
-            tinygl_pixel_set(pos, board[row][col]);
+            tinygl_pixel_set(pos, (*board)[row][col]); // Dereference the pointer
         }
     }
+}
+
+
+// void message_display_board(Board_t* board)
+// {
+//     tinygl_clear();
+//     for (tinygl_coord_t row = 0; row < LEDMAT_ROWS_NUM; row++) 
+//     {
+//         for (tinygl_coord_t col = 0; col < LEDMAT_COLS_NUM; col++) 
+//         {
+//             tinygl_point_t pos = {col, row};
+//             tinygl_pixel_set(pos, board[row][col]);
+//         }
+//     }
+// }
+
+void message_display_pixel(uint8_t col, uint8_t row, tinygl_pixel_value_t value)
+{
+    tinygl_point_t pos = {col, row};
+    tinygl_pixel_set(pos, value);
+}
+
+void message_clear(void)
+{
+    message_init();
+    tinygl_clear();
 }

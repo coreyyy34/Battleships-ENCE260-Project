@@ -46,13 +46,13 @@ pacer.o: ../../utils/pacer.c ../../drivers/avr/system.h ../../drivers/avr/timer.
 tinygl.o: ../../utils/tinygl.c ../../drivers/avr/system.h ../../drivers/display.h ../../utils/font.h ../../utils/tinygl.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
-ship.o: ship.c ship.h
-	$(CC) -c $(CFLAGS) $< -o $@
-
 board.o: board.c board.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
 game_state.o: game_state.h
+	$(CC) -c $(CFLAGS) $< -o $@ 
+
+util.o: util.h
 	$(CC) -c $(CFLAGS) $< -o $@ 
 
 predefined_boards.o: predefined_boards.h
@@ -62,7 +62,7 @@ message.o: message.c message.h
 	$(CC) -c $(CFLAGS) $< -o $@ 
 
 # Link: create ELF output file from object files.
-game.out: game.o system.o timer.o button.o display.o ledmat.o navswitch.o font.o pacer.o tinygl.o ship.o board.o message.o
+game.out: game.o system.o timer.o button.o display.o ledmat.o navswitch.o font.o pacer.o tinygl.o board.o message.o
 	$(CC) $(CFLAGS) $^ -o $@ -lm
 	$(SIZE) $@
 
