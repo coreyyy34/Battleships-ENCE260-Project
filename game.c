@@ -71,7 +71,6 @@ static void update_select_player(void)
 
     if (!initialised)
     {
-        message_char(player ? '2' : '1');
         initialised = true;
     }
 
@@ -81,7 +80,6 @@ static void update_select_player(void)
     if (navswitch_push_event_p(NAVSWITCH_EAST) || navswitch_push_event_p(NAVSWITCH_WEST))
     {
         player = !player;
-        message_char(player ? '2' : '1');
     }
     if (button_push_event_p (0))
     {

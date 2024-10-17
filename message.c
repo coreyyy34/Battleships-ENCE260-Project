@@ -25,15 +25,6 @@ void message_scrolling_message(const char* text)
     tinygl_text(text);
 }
 
-void message_char(char character)
-{
-    char text[2] = {character, '\0'}; 
-    message_init();
-    tinygl_clear();
-    tinygl_text_mode_set(TINYGL_TEXT_MODE_STEP);
-    tinygl_text(text);
-}
-
 void message_init(void)
 {
     tinygl_init(PACER_RATE);

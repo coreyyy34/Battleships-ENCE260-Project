@@ -48,7 +48,7 @@ static bool check_all_their_ships_sunk(void)
 
 BoardResponse_t board_check_our_shot_their_board(uint8_t row, uint8_t col)
 {
-    switch ((*their_board)[row][col])  // Access the element without dereferencing
+    switch ((*their_board)[row][col]) 
     {
         case SHIP_UNEXPLORED:
             (*their_board)[row][col] = SHIP_EXPLORED;

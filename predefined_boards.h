@@ -3,59 +3,81 @@
 
 #include <stdint.h>
 
+/**
+ * @brief Represents a predefined board configuration of ID 0.
+ */
 const PredefinedBoard_t BOARD_0 = {
     0b0000000, 
     0b0000000, 
     0b0000000, 
-    // 0b0001010,
-    0b0000100,      /* temp only have 1 point in center so testing is easy */
+    0b0001010,
     0b0000000, 
     0b0000000, 
     0b0000000};
+
+/**
+ * @brief Represents a predefined board configuration of ID 1.
+ */
 const PredefinedBoard_t BOARD_1 = {
-    0b00011000, 
-    0b11000000, 
-    0b00000001, 
-    0b00000001, 
-    0b11110001, 
-    0b00000000, 
-    0b01100000};
+    0b0011000, 
+    0b1000000, 
+    0b0000001, 
+    0b0000001, 
+    0b1110001, 
+    0b0000000, 
+    0b1100000};
+
+/**
+ * @brief Represents a predefined board configuration of ID 2.
+ */
 const PredefinedBoard_t BOARD_2 = {
-    0b00011101, 
-    0b00010000, 
-    0b00110000, 
-    0b00001000, 
-    0b00010100, 
-    0b00001000, 
-    0b00000000};
+    0b0011101, 
+    0b0010000, 
+    0b0110000, 
+    0b0001000, 
+    0b0010100, 
+    0b0001000, 
+    0b0000000};
+
+/**
+ * @brief Represents a predefined board configuration of ID 3.
+ */
 const PredefinedBoard_t BOARD_3 = {
-    0b00000001, 
-    0b00010001, 
-    0b00010101, 
-    0b00010101, 
-    0b00000011, 
-    0b00000000, 
-    0b11000000};
+    0b0000001, 
+    0b0010001, 
+    0b0010101, 
+    0b0010101, 
+    0b0000011, 
+    0b0000000, 
+    0b1000000};
+
+/**
+ * @brief Represents a predefined board configuration of ID 4.
+ */
 const PredefinedBoard_t BOARD_4 = {
-    0b00010100, 
-    0b00010100, 
-    0b00000100, 
-    0b00011000, 
-    0b00011100, 
-    0b00000000, 
-    0b11000000};
+    0b0010100, 
+    0b0010100, 
+    0b0000100, 
+    0b0011000, 
+    0b0011100, 
+    0b0000000, 
+    0b1000000};
+
+/**
+ * @brief Represents a predefined board configuration of ID 5.
+ */
 const PredefinedBoard_t BOARD_5 = {
-    0b00100001, 
-    0b00100001, 
-    0b00000001, 
-    0b00000011, 
-    0b00111000, 
-    0b00000000, 
-    0b00111000};
+    0b0100001, 
+    0b0100001, 
+    0b0000001, 
+    0b0000011, 
+    0b0111000, 
+    0b0000000, 
+    0b0111000};
 
-
-const uint8_t NUM_BOARDS = 6;
-
+/**
+ * @brief Array of pointers to predefined board configurations.
+ */
 const PredefinedBoard_t* PREDEFINED_BOARDS[] = {
     &BOARD_0,
     &BOARD_1,
@@ -65,4 +87,9 @@ const PredefinedBoard_t* PREDEFINED_BOARDS[] = {
     &BOARD_5
 };
 
-#endif
+/**
+ * @brief Total number of predefined boards available.
+ */
+const uint8_t NUM_BOARDS = sizeof(PREDEFINED_BOARDS) / sizeof(PredefinedBoard_t*);
+
+#endif /* PREDEFINED_BOARDS_H */
