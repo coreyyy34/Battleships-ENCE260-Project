@@ -7,7 +7,6 @@
 #include "system.h"
 #include "button.h"
 #include "pacer.h"
-#include "navswitch.h"
 #include "tinygl.h"
 #include "led.h"
 #include "game_state.h"
@@ -16,6 +15,9 @@
 #include "predefined_boards.h"
 #include "ir.h"
 #include "util.h"
+
+// wrappers for ucfk stuff
+#include "navigation_switch.h"
 
 #define PACER_RATE 500  // pacer ticks per second
 
@@ -80,13 +82,19 @@ static void update_select_player(void)
         initialised = true;
     }
 
-    navswitch_update();
     button_update();
     
-    if (navswitch_push_event_p(NAVSWITCH_EAST) || navswitch_push_event_p(NAVSWITCH_WEST))
+    switch (navigation_switch_get())
     {
-        player = !player;
-        message_char(player ? '2' : '1');
+        case DIR_EAST:
+        case DIR_WEST:
+            // there are only 2 players so we can just switch a boolean
+            // true is player 2, false is player 1
+            player = !player;
+            message_char(player ? '2' : '1');
+            break;
+        default:
+            break;
     }
     if (button_push_event_p (0))
     {
@@ -107,19 +115,22 @@ static void update_choose_board(void)
         initialised = true;
     }
 
-    navswitch_update();
     button_update();
 
-    if (navswitch_push_event_p(NAVSWITCH_EAST))
+    switch (navigation_switch_get())
     {
-        board_num = board_num == 0 ? NUM_BOARDS - 1 : board_num - 1;
-        message_display_pre_defined_board(PREDEFINED_BOARDS[board_num]);
+        case DIR_EAST:
+            board_num = board_num == 0 ? NUM_BOARDS - 1 : board_num - 1;
+            message_display_pre_defined_board(PREDEFINED_BOARDS[board_num]);
+            break;
+        case DIR_WEST:
+            board_num = board_num == NUM_BOARDS - 1 ? 0 : board_num + 1;
+            message_display_pre_defined_board(PREDEFINED_BOARDS[board_num]);
+            break;
+        default:
+            break;
     }
-    if (navswitch_push_event_p(NAVSWITCH_WEST))
-    {
-        board_num = board_num == NUM_BOARDS - 1 ? 0 : board_num + 1;
-        message_display_pre_defined_board(PREDEFINED_BOARDS[board_num]);
-    }
+
     if (button_push_event_p (0))
     {
         // setup our board and send the predefined board to the other board
@@ -171,22 +182,54 @@ static void update_select_shoot_position(void)
         explored_ticks = 0;
     }
 
-    navswitch_update();
 
     uint8_t prev_row = row;
     uint8_t prev_col = col;
     int8_t row_offset = 0;
     int8_t col_offset = 0;
 
-    if (navswitch_push_event_p(NAVSWITCH_NORTH))        /* up */
-        row_offset = -1;
-    else if (navswitch_push_event_p(NAVSWITCH_SOUTH))   /* down */
-        row_offset = 1;
-
-    if (navswitch_push_event_p(NAVSWITCH_WEST))         /* left */
-        col_offset = -1;
-    else if (navswitch_push_event_p(NAVSWITCH_EAST))    /* right */
-        col_offset = 1;
+    switch (navigation_switch_get())
+    {
+        case DIR_NORTH:
+            row_offset = -1;
+            break;
+        case DIR_SOUTH:
+            row_offset = 1;
+            break;
+        case DIR_WEST:
+            col_offset = -1;
+            break;
+        case DIR_EAST:
+            col_offset = 1;
+            break;
+        case DIR_PUSHED: {
+            BoardResponse_t response = board_check_our_shot_their_board(row, col);
+            if (response == HIT) 
+            {   
+                ir_send_our_turn_state(HIT);
+                set_scrolling_message(MESSAGE_HIT, GAME_STATE_THEIR_TURN);
+                previous_shot = true;
+                initialised = false;
+            }
+            else if (response == MISS)
+            {
+                ir_send_our_turn_state(MISS);
+                set_scrolling_message(MESSAGE_MISS, GAME_STATE_THEIR_TURN);
+                initialised = false;
+                previous_shot = true;
+            }
+            else if (response == WINNER)
+            {
+                // other board will interpret receiving WINNER as we won and they lost
+                ir_send_our_turn_state(WINNER);
+                set_scrolling_message(MESSAGE_WINNER, GAME_STATE_END);
+                initialised = false;
+            }
+            break;
+        }
+        default:
+            break;
+    }
 
     // boundary checks
     row = (row + row_offset < LEDMAT_ROWS_NUM) ? (row + row_offset >= 0 ? row + row_offset : 0) : LEDMAT_ROWS_NUM - 1;
@@ -205,34 +248,7 @@ static void update_select_shoot_position(void)
             previous_shot = false;
         }
     }
-    
-
-    if (navswitch_push_event_p(NAVSWITCH_PUSH))
-    {
-        BoardResponse_t response = board_check_our_shot_their_board(row, col);
-        if (response == HIT) 
-        {   
-            ir_send_our_turn_state(HIT);
-            set_scrolling_message(MESSAGE_HIT, GAME_STATE_THEIR_TURN);
-            previous_shot = true;
-            initialised = false;
-        }
-        else if (response == MISS)
-        {
-            ir_send_our_turn_state(MISS);
-            set_scrolling_message(MESSAGE_MISS, GAME_STATE_THEIR_TURN);
-            initialised = false;
-            previous_shot = true;
-        }
-        else if (response == WINNER)
-        {
-            // other board will interpret receiving WINNER as we won and they lost
-            ir_send_our_turn_state(WINNER);
-            set_scrolling_message(MESSAGE_WINNER, GAME_STATE_END);
-            initialised = false;
-        }
-    }
-
+   
     if (cursor_ticks++ == 100)
     {
         cursor_on = !cursor_on;
@@ -328,9 +344,7 @@ int main(void)
         switch (game_state) 
         {
             case GAME_STATE_TITLE_SCREEN:
-                // skip the title screen and go straight to choose player state for quick launch
-                // set_scrolling_message(" BATTLESHIPS ", GAME_STATE_SELECT_PLAYER);
-                set_game_state(GAME_STATE_SELECT_PLAYER);
+                set_scrolling_message(" BATTLESHIPS ", GAME_STATE_SELECT_PLAYER);
                 break;
             case GAME_STATE_SELECT_PLAYER:
                 update_receive_their_board();

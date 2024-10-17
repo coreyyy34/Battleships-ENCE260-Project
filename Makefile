@@ -30,7 +30,7 @@ SRC = game.c \
       ../../utils/pacer.c \
       ../../utils/tinygl.c \
       ../../drivers/led.c \
-      game_state.c \
+      navigation_switch.c \
       board.c \
       message.c \
       ir.c
