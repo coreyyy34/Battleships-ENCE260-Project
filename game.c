@@ -204,10 +204,13 @@ static void update_select_shoot_position(void)
         BoardResponse_t response = board_check_our_shot_their_board(row, col);
         if (response == HIT) 
         {   
-            if (check_player_hits(&PREDEFINED_BOARDS[our_predefined_board_id]))
+            player_hits++;
+            if player_hits <= 12
             {
                 set_game_state(GAME_STATE_VICTORY_MESSAGE)
             }   else    {
+
+            
             ir_send_our_turn_state(HIT);
             set_scrolling_message(MESSAGE_HIT, GAME_STATE_THEIR_TURN);
             initialised = false;
@@ -244,7 +247,7 @@ static void update_select_shoot_position(void)
                 }
             }
         }
-    } 
+    }
 }
 
 static void update_receive_their_turn(void)
@@ -255,7 +258,14 @@ static void update_receive_their_turn(void)
     {
         if (response == HIT)
         {
+            opponent_hits++;
+            if (opponent_hits <= 12)
+            {
+                set_game_state(GAME_STATE_LOSS_MESSAGE);
+            }   else    {
+
             set_scrolling_message(MESSAGE_HIT, GAME_STATE_SELECT_SHOOT_POSITION);
+            }
         }
         else if (response == MISS)
         {
