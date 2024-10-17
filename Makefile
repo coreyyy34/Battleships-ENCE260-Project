@@ -32,6 +32,7 @@ SRC = game.c \
       ../../drivers/led.c \
       navigation_switch.c \
       player_management.c \
+      predefined_boards.c \
       board.c \
       message.c \
       ir.c

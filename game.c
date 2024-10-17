@@ -116,22 +116,6 @@ static void update_choose_board(void)
     }
 }
 
-static void update_receive_their_board(void)
-{
-    if (!received_their_board)
-    {
-        if (ir_get_their_predefined_board_id(&their_predefined_board_id))
-        {
-            received_their_board = true;
-            their_board = create_board(PREDEFINED_BOARDS[their_predefined_board_id]);
-        }
-    } else if (sent_our_board) {
-        // player 1 starts by sending a shot (selecting a shoot position initially)
-        // player 2 starts by waiting for player 1's shot
-        set_game_state(player_number == 1 ? GAME_STATE_SELECT_SHOOT_POSITION : GAME_STATE_THEIR_TURN);
-    }
-}
-
 static void update_select_shoot_position(void)
 {
     static bool initialised = false;

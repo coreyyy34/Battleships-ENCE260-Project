@@ -14,4 +14,12 @@
  */
 void update_select_player(void);
 
+/**
+ * @brief Updates to check if the other player has sent their board.
+ * 
+ * If the board has been received, the next phase of the game will 
+ * begin, if not we will keep waiting.
+ */
+void update_receive_their_board(void);
+
 #endif /* PLAYER_MANAGEMENT_H */
