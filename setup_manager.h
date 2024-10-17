@@ -1,4 +1,4 @@
-/** @file   player_management.h
+/** @file   setup_manager.h
  *  @author Corey Hines
  *  @date   17/10/2024
  */
@@ -7,7 +7,7 @@
 #define PLAYER_MANAGEMENT_H
 
 /**
- * @brief Update the player selection process.
+ * @brief Updates the player selection process.
  *
  * This function handles the logic for selecting the player 
  * (player 1 or player 2) during the game setup phase.
@@ -21,5 +21,13 @@ void update_select_player(void);
  * begin, if not we will keep waiting.
  */
 void update_receive_their_board(void);
+
+/**
+ * @brief Updates the choose board process.
+ * 
+ * This function handles the logic for the player selecting
+ * a board during the game setup phase.
+ */
+void update_choose_board(void);
 
 #endif /* PLAYER_MANAGEMENT_H */

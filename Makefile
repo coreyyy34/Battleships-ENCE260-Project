@@ -31,7 +31,8 @@ SRC = game.c \
       ../../utils/tinygl.c \
       ../../drivers/led.c \
       navigation_switch.c \
-      player_management.c \
+      setup_manager.c \
+      board_manager.c \
       predefined_boards.c \
       board.c \
       message.c \

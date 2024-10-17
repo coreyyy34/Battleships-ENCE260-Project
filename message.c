@@ -75,3 +75,8 @@ void message_clear(void)
     message_init();
     tinygl_clear();
 }
+
+void message_update(void)
+{
+    tinygl_clear();
+}

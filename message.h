@@ -65,4 +65,9 @@ void message_display_pixel(uint8_t col, uint8_t row, tinygl_pixel_value_t value)
  */
 void message_clear(void);
 
+/**
+ * @brief Updates the message display.
+ */
+void message_update(void);
+
 #endif /* MESSAGE_H */

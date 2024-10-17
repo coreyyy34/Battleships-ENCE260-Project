@@ -16,6 +16,13 @@
  */
 void set_game_state(GameState_t new_game_state);
 
+/**
+ * @brief Sets the scrolling message to be displayed.
+ * @param text The message to be displayed.
+ * @param The state to switch to once the message has finished scrolling.
+ */
+void set_scrolling_message(char* text, GameState_t finish_state);
+
 /** 
  * @brief Flag indicating if the other player's board has been received. 
  */
