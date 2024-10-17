@@ -208,31 +208,18 @@ static void update_select_shoot_position(void)
         BoardResponse_t response = board_check_our_shot_their_board(row, col);
         if (response == HIT) 
         {   
-            player_hits++;
-            if (player_hits <= 12)
-            {
-                set_scrolling_message(" YOU WON! ", GAME_STATE_VICTORY_MESSAGE);
-            }  
-            else    
-            {
-                ir_send_our_turn_state(HIT);
-                set_scrolling_message(MESSAGE_HIT, GAME_STATE_THEIR_TURN);
-                initialised = false;
-                previous_shot = true;
-            }
+            ir_send_our_turn_state(HIT);
+            set_scrolling_message(MESSAGE_HIT, GAME_STATE_THEIR_TURN);
+            previous_shot = true;
+            initialised = false;
         }
         if (response == MISS)
         {
             ir_send_our_turn_state(MISS);
             set_scrolling_message(MESSAGE_MISS, GAME_STATE_THEIR_TURN);
-            initialised = true;
+            initialised = false;
             previous_shot = true;
         }
-
-        // // seem to be an issue sometimes when we receive our own state
-        // // ir_uart checks for this but maybe we check for it too
-        // BoardResponse_t unused;
-        // ir_get_their_turn_state(&unused);
     }
 
     if (cursor_ticks++ == 100)
@@ -270,7 +257,6 @@ static void update_select_shoot_position(void)
 
 static void update_receive_their_turn(void)
 {
-    static uint8_t opponent_hits = 0;
     static uint8_t ticks = 0;
     static bool initialise = false;
 
@@ -291,15 +277,7 @@ static void update_receive_their_turn(void)
     {
         if (response == HIT)
         {
-            opponent_hits++;
-            if (opponent_hits <= 12)
-            {
-                set_game_state(GAME_STATE_LOSS_MESSAGE);
-            }   
-            else    
-            {
-                set_scrolling_message(MESSAGE_HIT, GAME_STATE_SELECT_SHOOT_POSITION);
-            }
+            set_scrolling_message(MESSAGE_HIT, GAME_STATE_SELECT_SHOOT_POSITION);
             initialise = false;
         }
         else if (response == MISS)
