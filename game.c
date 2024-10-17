@@ -14,14 +14,14 @@
 
 #define PACER_RATE 500  // pacer ticks per second
 
-static GameState_t prev_game_state = GAME_STATE_TITLE_SCREEN;
-static GameState_t game_state = GAME_STATE_TITLE_SCREEN;
+static GameState_t prev_game_state;
+static GameState_t game_state;
 
-static char* scrolling_text = NULL;
-static GameState_t scrolling_finish_state = GAME_STATE_TITLE_SCREEN;
+static char* scrolling_text;
+static GameState_t scrolling_finish_state;
 
-static bool received_their_board = false;
-static bool sent_our_board = false;
+static bool received_their_board;
+static bool sent_our_board;
 static uint8_t player_number;
 
 static void set_game_state(GameState_t new_game_state)
@@ -123,6 +123,7 @@ static void update_choose_board(void)
         set_game_state(GAME_STATE_AWAIT_BOARD_EXCHANGE);
 
         ir_send_our_predefined_board_id(our_predefined_board_id);
+        
         sent_our_board = true;
         initialised = false;
     }
@@ -149,7 +150,9 @@ static void update_select_shoot_position(void)
     static bool initialised = false;
     static uint8_t col = 2;
     static uint8_t row = 3;
-    static int16_t ticks = 0;
+    static uint8_t cursor_ticks = 0;
+    static uint8_t explored_ticks = 0;
+    static bool cursor_on = false;
     static bool explored_on = false;
     static bool previous_shot = false;
 
@@ -159,7 +162,8 @@ static void update_select_shoot_position(void)
         message_display_pixel(col, row, PIXEL_ON);
         initialised = true;
         previous_shot = false;
-        ticks = 0;
+        cursor_ticks = 0;
+        explored_ticks = 0;
     }
 
     navswitch_update();
@@ -215,44 +219,75 @@ static void update_select_shoot_position(void)
             initialised = true;
             previous_shot = true;
         }
+
+        // // seem to be an issue sometimes when we receive our own state
+        // // ir_uart checks for this but maybe we check for it too
+        // BoardResponse_t unused;
+        // ir_get_their_turn_state(&unused);
     }
 
-    if (ticks++ == 100)
+    if (cursor_ticks++ == 100)
+    {
+        cursor_on = !cursor_on;
+        message_display_pixel(prev_col, prev_row, cursor_on);
+        cursor_ticks = 0;
+    }
+
+    if (explored_ticks++ == 10)
     {
         explored_on = !explored_on;
-        message_display_pixel(prev_col, prev_row, explored_on);
-        ticks = 0;
-    }
-
-    for (uint8_t cell_row = 0; cell_row < BOARD_ROWS_NUM; cell_row++)
-    {
-        for (uint8_t cell_col = 0; cell_col < BOARD_COLS_NUM; cell_col++)
+        for (uint8_t cell_row = 0; cell_row < BOARD_ROWS_NUM; cell_row++)
         {
-            // dont prevent it from flashing if we are on this current row, col
-            if (cell_row != row || cell_col != col)
+            for (uint8_t cell_col = 0; cell_col < BOARD_COLS_NUM; cell_col++)
             {
-                BoardCellState_t cell_state = (*their_board)[cell_row][cell_col];
-                if (cell_state == SHIP_EXPLORED || cell_state == EMPTY_EXPLORED)
+                // dont prevent it from flashing if we are on this current row, col
+                if (cell_row != row || cell_col != col)
                 {
-                    message_display_pixel(cell_col, cell_row, PIXEL_ON);
+                    BoardCellState_t cell_state = (*their_board)[cell_row][cell_col];
+                    if (cell_state == SHIP_EXPLORED)
+                    {
+                        message_display_pixel(cell_col, cell_row, explored_on);
+                    }
+                    else if (cell_state == EMPTY_EXPLORED)
+                    {
+                        message_display_pixel(cell_col, cell_row, PIXEL_ON);
+                    }
                 }
             }
         }
+        explored_ticks = 0;
     }
 }
 
 static void update_receive_their_turn(void)
 {
+    static uint8_t ticks = 0;
+    static bool initialise = false;
+
+    if (!initialise)
+    {
+        ticks = 0;
+        initialise = true;
+    }
+
+    // wait 250 ticks (~0.5 seconds) before trying to receive their response
+    // as there are troubles with receiving our own signal
+    if (ticks != 250) {
+        ticks++;
+        return;
+    }
     BoardResponse_t response;
     if (ir_get_their_turn_state(&response)) 
     {
         if (response == HIT)
         {
             set_scrolling_message(MESSAGE_HIT, GAME_STATE_SELECT_SHOOT_POSITION);
+            initialise = false;
         }
         else if (response == MISS)
         {
             set_scrolling_message(MESSAGE_MISS, GAME_STATE_SELECT_SHOOT_POSITION);
+            initialise = false;
         }
     }
 }
@@ -266,6 +301,12 @@ int main(void)
     ir_uart_init();
     led_init();
     led_set(LED1, 0);
+    prev_game_state = GAME_STATE_TITLE_SCREEN;
+    game_state = GAME_STATE_TITLE_SCREEN;
+    scrolling_text = NULL;
+    scrolling_finish_state = GAME_STATE_TITLE_SCREEN;
+    received_their_board = false;
+    sent_our_board = false;
 
     while (1)
     {

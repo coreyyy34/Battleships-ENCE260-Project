@@ -54,20 +54,6 @@ void message_display_pre_defined_board(const PredefinedBoard_t* board) {
     }
 }
 
-
-// void message_display_board(Board_t* board)
-// {
-//     tinygl_clear();
-//     for (tinygl_coord_t row = 0; row < LEDMAT_ROWS_NUM; row++) 
-//     {
-//         for (tinygl_coord_t col = 0; col < LEDMAT_COLS_NUM; col++) 
-//         {
-//             tinygl_point_t pos = {col, row};
-//             tinygl_pixel_set(pos, board[row][col]);
-//         }
-//     }
-// }
-
 void message_display_pixel(uint8_t col, uint8_t row, tinygl_pixel_value_t value)
 {
     tinygl_point_t pos = {col, row};
