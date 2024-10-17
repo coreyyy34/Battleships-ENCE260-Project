@@ -71,6 +71,7 @@ static void update_select_player(void)
 
     if (!initialised)
     {
+        message_char(player ? '2' : '1');
         initialised = true;
     }
 
@@ -80,6 +81,7 @@ static void update_select_player(void)
     if (navswitch_push_event_p(NAVSWITCH_EAST) || navswitch_push_event_p(NAVSWITCH_WEST))
     {
         player = !player;
+        message_char(player ? '2' : '1');
     }
     if (button_push_event_p (0))
     {
@@ -153,7 +155,6 @@ static void update_select_shoot_position(void)
     static bool cursor_on = false;
     static bool explored_on = false;
     static bool previous_shot = false;
-    static uint8_t player_hits = 0;
 
     // Initialize the starting position if not done already
     if (!initialised)

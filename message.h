@@ -12,7 +12,6 @@
 #define PIXEL_ON 1  // Value representing a pixel that is turned on
 #define PIXEL_OFF 0 // Value representing a pixel that is turned off
 
-
 #define MESSAGE_HIT " HIT "         // Message displayed for a hit
 #define MESSAGE_MISS " MISS "       // Message displayed for a miss
 #define MESSAGE_WINNER " YOU WON! " // Message displayed when the player wins
@@ -30,6 +29,12 @@ uint32_t message_calculate_scrolling_message_ticks(const char* text);
  * @param text The message text to be displayed.
  */
 void message_scrolling_message(const char* text);
+
+/**
+ * @brief Specifies a character to show on the screen.
+ * @param character The character to be displayed.
+ */
+void message_char(char character);
 
 /**
  * @brief Initializes the message display system.

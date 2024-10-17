@@ -5,8 +5,8 @@
 Board_t* our_board = NULL;
 Board_t* their_board = NULL;
 
-uint8_t our_predefined_board_id = NULL;
-uint8_t their_predefined_board_id = NULL;
+uint8_t our_predefined_board_id = 0;
+uint8_t their_predefined_board_id = 0;
 
 Board_t* create_board(const PredefinedBoard_t* predefined_board)
 {
@@ -34,7 +34,6 @@ static bool check_all_their_ships_sunk(void)
 {
     for (uint8_t row = 0; row < BOARD_ROWS_NUM; row++)
     {
-        uint8_t row_data = (*their_board)[row];
         for (uint8_t col = 0; col < BOARD_COLS_NUM; col++)
         {
             if ((*their_board)[row][col] == SHIP_UNEXPLORED)
@@ -45,6 +44,7 @@ static bool check_all_their_ships_sunk(void)
     }
     return true;
 }
+
 
 BoardResponse_t board_check_our_shot_their_board(uint8_t row, uint8_t col)
 {
