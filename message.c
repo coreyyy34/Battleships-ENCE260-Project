@@ -41,15 +41,19 @@ void message_init(void)
     tinygl_text_speed_set(MESSAGE_RATE);
 }
 
-void message_display_pre_defined_board(const PredefinedBoard_t* board) {
+void message_display_pre_defined_board(const PredefinedBoard_t* board)
+{
     message_init();
     tinygl_clear();
-    for (tinygl_coord_t row = 0; row < LEDMAT_ROWS_NUM; row++) 
+    for (tinygl_coord_t row = 0; row < LEDMAT_ROWS_NUM; row++)
     {
-        for (tinygl_coord_t col = 0; col < LEDMAT_COLS_NUM; col++) 
+        uint8_t row_data = (*board)[row];  // Get the packed row
+        for (tinygl_coord_t col = 0; col < LEDMAT_COLS_NUM; col++)
         {
             tinygl_point_t pos = {col, row};
-            tinygl_pixel_set(pos, (*board)[row][col]); // Dereference the pointer
+            // Extract each bit from the row (shift right and mask)
+            uint8_t pixel_on = (row_data >> (LEDMAT_COLS_NUM - 1 - col)) & 1;
+            tinygl_pixel_set(pos, pixel_on);
         }
     }
 }

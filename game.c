@@ -213,12 +213,19 @@ static void update_select_shoot_position(void)
             previous_shot = true;
             initialised = false;
         }
-        if (response == MISS)
+        else if (response == MISS)
         {
             ir_send_our_turn_state(MISS);
             set_scrolling_message(MESSAGE_MISS, GAME_STATE_THEIR_TURN);
             initialised = false;
             previous_shot = true;
+        }
+        else if (response == WINNER)
+        {
+            // other board will interpret receiving WINNER as we won and they lost
+            ir_send_our_turn_state(WINNER);
+            set_scrolling_message(MESSAGE_WINNER, GAME_STATE_END);
+            initialised = false;
         }
     }
 
@@ -285,6 +292,12 @@ static void update_receive_their_turn(void)
             set_scrolling_message(MESSAGE_MISS, GAME_STATE_SELECT_SHOOT_POSITION);
             initialise = false;
         }
+        else if (response == WINNER)
+        {
+            // if they won we lost :(
+            set_scrolling_message(MESSAGE_LOSER, GAME_STATE_END);
+            initialise = false;
+        }
     }
 }
 
@@ -337,12 +350,6 @@ int main(void)
                 break;
             case GAME_STATE_SHOWING_MESSAGE:
                 update_scrolling_message();
-                break;
-            case GAME_STATE_VICTORY_MESSAGE:
-                set_scrolling_message("YOU WIN!", GAME_STATE_TITLE_SCREEN);
-                break;
-            case GAME_STATE_LOSS_MESSAGE:
-                set_scrolling_message("YOU LOSE!", GAME_STATE_TITLE_SCREEN);
                 break;
             default: 
                 break;

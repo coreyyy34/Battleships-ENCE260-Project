@@ -7,7 +7,7 @@
 #define BOARD_ROWS_NUM LEDMAT_ROWS_NUM
 #define BOARD_COLS_NUM LEDMAT_COLS_NUM
 
-typedef tinygl_pixel_value_t PredefinedBoard_t[LEDMAT_ROWS_NUM][LEDMAT_COLS_NUM];
+typedef uint8_t PredefinedBoard_t[7];
 typedef uint8_t Board_t[LEDMAT_ROWS_NUM][LEDMAT_COLS_NUM];
 
 typedef enum
@@ -23,6 +23,8 @@ typedef enum
     NONE,   /** Represents a cell has previously been discovered */
     MISS,   /** Represents a cell that was targeted but contained no ship. */
     HIT,    /** Represents a ship point that has been hit */
+    WINNER, /** Represents we won - all their ships are sunk */
+    LOSER,  /** Represents we lost - all our ships are sunk */
 } BoardResponse_t;
 
 typedef enum 

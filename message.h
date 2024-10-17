@@ -12,6 +12,8 @@
 
 #define MESSAGE_HIT " HIT "
 #define MESSAGE_MISS " MISS "
+#define MESSAGE_WINNER " YOU WON! "
+#define MESSAGE_LOSER " YOU LOST! "
 
 uint32_t message_calculate_scrolling_message_ticks(const char* text);
 
