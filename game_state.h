@@ -1,3 +1,8 @@
+/** @file   game_state.h
+ *  @author Corey Hines
+ *  @date   17/10/2024
+ */
+
 #ifndef GAME_STATE_H
 #define GAME_STATE_H
 

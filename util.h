@@ -1,3 +1,8 @@
+/** @file   utils.h
+ *  @author Corey Hines
+ *  @date   17/10/2024
+ */
+
 #ifndef UTIL_H
 #define UTIL_H
 

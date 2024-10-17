@@ -1,3 +1,8 @@
+/** @file   ir.c
+ *  @author Corey Hines
+ *  @date   17/10/2024
+ */
+
 #ifndef IR_H
 #define IR_H
 

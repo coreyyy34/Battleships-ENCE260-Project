@@ -1,3 +1,8 @@
+/** @file   message.h
+ *  @author Corey Hines
+ *  @date   17/10/2024
+ */
+
 #ifndef MESSAGE_H
 #define MESSAGE_H
 

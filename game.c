@@ -1,3 +1,8 @@
+/** @file   game.c
+ *  @author Corey Hines
+ *  @date   17/10/2024
+ */
+
 #include <string.h>
 #include "system.h"
 #include "button.h"

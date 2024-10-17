@@ -1,3 +1,8 @@
+/** @file   board.h
+ *  @author Corey Hines
+ *  @date   17/10/2024
+ */
+
 #ifndef BOARD_H
 #define BOARD_H
 

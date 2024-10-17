@@ -1,3 +1,8 @@
+/** @file   message.c
+ *  @author Corey Hines
+ *  @date   17/10/2024
+ */
+
 #include <stdint.h>
 #include <string.h>
 #include "message.h"

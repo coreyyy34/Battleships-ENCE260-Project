@@ -1,3 +1,8 @@
+/** @file   board.c
+ *  @author Corey Hines
+ *  @date   17/10/2024
+ */
+
 #include <stdlib.h> 
 #include <string.h>
 #include "board.h"

@@ -1,3 +1,8 @@
+/** @file   ir.c
+ *  @author Corey Hines
+ *  @date   17/10/2024
+ */
+
 #include <stdint.h>
 #include "ir_uart.h"
 #include "ir.h"
