@@ -6,12 +6,13 @@
 #include "setup_manager.h"
 #include <stdbool.h>
 #include "navigation_switch.h"
-#include "message.h"
+#include "screen.h"
 #include "button.h" /* todo - turn this into our own module*/
 #include "ir.h"
 #include "game_state.h"
-#include "game.h"
+#include "board.h"
 #include "predefined_boards.h"
+#include "game.h"
 
 void update_select_player(void)
 {
@@ -22,7 +23,7 @@ void update_select_player(void)
     {
         initialised = true;
         player = 0;
-        message_char(player ? '2' : '1');
+        screen_set_char(player ? '2' : '1');
     }
 
     button_update();
@@ -34,7 +35,7 @@ void update_select_player(void)
             // there are only 2 players so we can just switch a boolean
             // true is player 2, false is player 1
             player = !player;
-            message_char(player ? '2' : '1');
+            screen_set_char(player ? '2' : '1');
             break;
         default:
             break;
@@ -70,7 +71,7 @@ static bool initialised = false;
 
     if (!initialised)
     {
-        message_display_pre_defined_board(PREDEFINED_BOARDS[board_num]);
+        screen_set_predefined_board(PREDEFINED_BOARDS[board_num]);
         initialised = true;
     }
 
@@ -80,11 +81,11 @@ static bool initialised = false;
     {
         case DIR_EAST:
             board_num = board_num == 0 ? NUM_BOARDS - 1 : board_num - 1;
-            message_display_pre_defined_board(PREDEFINED_BOARDS[board_num]);
+            screen_set_predefined_board(PREDEFINED_BOARDS[board_num]);
             break;
         case DIR_WEST:
             board_num = board_num == NUM_BOARDS - 1 ? 0 : board_num + 1;
-            message_display_pre_defined_board(PREDEFINED_BOARDS[board_num]);
+            screen_set_predefined_board(PREDEFINED_BOARDS[board_num]);
             break;
         default:
             break;

@@ -8,6 +8,7 @@
 
 /**
  * @brief Represents a predefined board configuration of ID 0.
+ * @note This board contains 2 ship cells and should only be used for testing.
  */
 const PredefinedBoard_t BOARD_0 = {
     0b00000,

@@ -1,6 +1,6 @@
 #include "board_manager.h"
 #include "board.h"
-#include "message.h"
+#include "screen.h"
 #include "game_state.h"
 #include "game.h"
 #include "ir.h"
@@ -34,11 +34,11 @@ static void update_showing_explored_cells(uint8_t row, uint8_t col)
                     BoardCellState_t cell_state = (*their_board)[cell_row][cell_col];
                     if (cell_state == SHIP_EXPLORED)
                     {
-                        message_display_pixel(cell_col, cell_row, explored_on);
+                        screen_set_pixel(cell_col, cell_row, explored_on);
                     }
                     else if (cell_state == EMPTY_EXPLORED)
                     {
-                        message_display_pixel(cell_col, cell_row, PIXEL_ON);
+                        screen_set_pixel(cell_col, cell_row, PIXEL_ON);
                     }
                 }
             }
@@ -63,7 +63,7 @@ static void update_showing_cursor(uint8_t row, uint8_t col)
     if (cursor_ticks++ == 100)
     {
         cursor_on = !cursor_on;
-        message_display_pixel(col, row, cursor_on);
+        screen_set_pixel(col, row, cursor_on);
         cursor_ticks = 0;
     }
 }
@@ -90,18 +90,21 @@ void update_receive_their_turn(void)
     {
         if (response == HIT)
         {
-            set_scrolling_message(MESSAGE_HIT, GAME_STATE_SELECT_SHOOT_POSITION);
+            set_game_state(GAME_STATE_SELECT_SHOOT_POSITION);
+            screen_set_scrolling_text(MESSAGE_HIT);
             initialise = false;
         }
         else if (response == MISS)
         {
-            set_scrolling_message(MESSAGE_MISS, GAME_STATE_SELECT_SHOOT_POSITION);
+            set_game_state(GAME_STATE_SELECT_SHOOT_POSITION);
+            screen_set_scrolling_text(MESSAGE_MISS);
             initialise = false;
         }
         else if (response == WINNER)
         {
             // if they won we lost :(
-            set_scrolling_message(MESSAGE_LOSER, GAME_STATE_END);
+            set_game_state(GAME_STATE_END);
+            screen_set_scrolling_text(MESSAGE_LOSER);
             initialise = false;
         }
     }
@@ -117,11 +120,10 @@ void update_select_shoot_position(void)
     // Initialize the starting position if not done already
     if (!initialised)
     {
-        message_display_pixel(col, row, PIXEL_ON);
+        screen_set_pixel(col, row, PIXEL_ON);
         initialised = true;
         previous_shot = false;
     }
-
 
     uint8_t prev_row = row;
     uint8_t prev_col = col;
@@ -147,14 +149,16 @@ void update_select_shoot_position(void)
             if (response == HIT) 
             {   
                 ir_send_our_turn_state(HIT);
-                set_scrolling_message(MESSAGE_HIT, GAME_STATE_THEIR_TURN);
-                previous_shot = true;
+                set_game_state(GAME_STATE_THEIR_TURN);
+                screen_set_scrolling_text(MESSAGE_HIT);
                 initialised = false;
+                previous_shot = true;
             }
             else if (response == MISS)
             {
                 ir_send_our_turn_state(MISS);
-                set_scrolling_message(MESSAGE_MISS, GAME_STATE_THEIR_TURN);
+                set_game_state(GAME_STATE_THEIR_TURN);
+                screen_set_scrolling_text(MESSAGE_MISS);
                 initialised = false;
                 previous_shot = true;
             }
@@ -162,7 +166,8 @@ void update_select_shoot_position(void)
             {
                 // other board will interpret receiving WINNER as we won and they lost
                 ir_send_our_turn_state(WINNER);
-                set_scrolling_message(MESSAGE_WINNER, GAME_STATE_END);
+                set_game_state(GAME_STATE_END);
+                screen_set_scrolling_text(MESSAGE_WINNER);
                 initialised = false;
             }
             break;
@@ -181,7 +186,7 @@ void update_select_shoot_position(void)
         // turn off previous only if it wasnt previously hit
         if (!previous_shot)
         {
-            message_display_pixel(prev_col, prev_row, PIXEL_OFF);
+            screen_set_pixel(prev_col, prev_row, PIXEL_OFF);
         } 
         else 
         {

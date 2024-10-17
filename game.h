@@ -10,18 +10,13 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#define PACER_RATE 500  /**< Defines the pacer tick rate (ticks per second). */
+
 /**
  * @brief Set the current game state.
  * @param new_game_state The new game state to be set.
  */
 void set_game_state(GameState_t new_game_state);
-
-/**
- * @brief Sets the scrolling message to be displayed.
- * @param text The message to be displayed.
- * @param The state to switch to once the message has finished scrolling.
- */
-void set_scrolling_message(char* text, GameState_t finish_state);
 
 /** 
  * @brief Flag indicating if the other player's board has been received. 
@@ -34,7 +29,7 @@ extern bool received_their_board;
 extern bool sent_our_board;
 
 /** 
- * @brief The player number (1 or 2) of the current player.
+ * @brief The player number (1 or 2) of the player using this board.
  */
 extern uint8_t player_number;
 

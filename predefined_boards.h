@@ -11,6 +11,7 @@
 
 /**
  * @brief Represents a predefined board configuration of ID 0.
+ * @note This board contains 2 ship cells and should only be used for testing.
  */
 extern const PredefinedBoard_t BOARD_0;
 
