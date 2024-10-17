@@ -3,6 +3,7 @@
  *  @date   17/10/2024
  */
 
+#include "game.h"
 #include <string.h>
 #include "system.h"
 #include "button.h"
@@ -19,6 +20,9 @@
 // wrappers for ucfk stuff
 #include "navigation_switch.h"
 
+// modules to handle game states
+#include "player_management.h"
+
 #define PACER_RATE 500  // pacer ticks per second
 
 static GameState_t prev_game_state;
@@ -27,11 +31,11 @@ static GameState_t game_state;
 static char* scrolling_text;
 static GameState_t scrolling_finish_state;
 
-static bool received_their_board;
-static bool sent_our_board;
-static uint8_t player_number;
+bool received_their_board;
+bool sent_our_board;
+uint8_t player_number;
 
-static void set_game_state(GameState_t new_game_state)
+void set_game_state(GameState_t new_game_state)
 {
     prev_game_state = game_state;
     game_state = new_game_state;
@@ -68,39 +72,6 @@ static void update_scrolling_message(void)
         total_ticks = 0;
         initialised = false;
         scrolling_text = NULL;
-    }
-}
-
-static void update_select_player(void)
-{
-    static bool initialised = false;
-    static bool player = 0;
-
-    if (!initialised)
-    {
-        message_char(player ? '2' : '1');
-        initialised = true;
-    }
-
-    button_update();
-    
-    switch (navigation_switch_get())
-    {
-        case DIR_EAST:
-        case DIR_WEST:
-            // there are only 2 players so we can just switch a boolean
-            // true is player 2, false is player 1
-            player = !player;
-            message_char(player ? '2' : '1');
-            break;
-        default:
-            break;
-    }
-    if (button_push_event_p (0))
-    {
-        set_game_state(GAME_STATE_CHOOSE_BOARD);
-        initialised = false;
-        player_number = player ? 2 : 1;
     }
 }
 
