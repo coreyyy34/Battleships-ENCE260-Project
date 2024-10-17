@@ -3,8 +3,8 @@
 Players take turns attempting to hit their opponent's battleships, with the first player to sink all enemy ships declared the winner.
 
 ## Authors
-Corey Hines
-Ethan Field
+- Corey Hines
+- Ethan Field
 
 # Building and Loading the Game
 - Cloning the UCFK4 Software:
