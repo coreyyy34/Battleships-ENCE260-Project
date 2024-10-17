@@ -155,6 +155,7 @@ static void update_select_shoot_position(void)
     static bool cursor_on = false;
     static bool explored_on = false;
     static bool previous_shot = false;
+    static uint8_t player_hits = 0;
 
     // Initialize the starting position if not done already
     if (!initialised)
@@ -206,11 +207,19 @@ static void update_select_shoot_position(void)
     {
         BoardResponse_t response = board_check_our_shot_their_board(row, col);
         if (response == HIT) 
-        {
-            ir_send_our_turn_state(HIT);
-            set_scrolling_message(MESSAGE_HIT, GAME_STATE_THEIR_TURN);
-            initialised = false;
-            previous_shot = true;
+        {   
+            player_hits++;
+            if (player_hits <= 12)
+            {
+                set_scrolling_message(" YOU WON! ", GAME_STATE_VICTORY_MESSAGE);
+            }  
+            else    
+            {
+                ir_send_our_turn_state(HIT);
+                set_scrolling_message(MESSAGE_HIT, GAME_STATE_THEIR_TURN);
+                initialised = false;
+                previous_shot = true;
+            }
         }
         if (response == MISS)
         {
@@ -261,6 +270,7 @@ static void update_select_shoot_position(void)
 
 static void update_receive_their_turn(void)
 {
+    static uint8_t opponent_hits = 0;
     static uint8_t ticks = 0;
     static bool initialise = false;
 
@@ -281,7 +291,15 @@ static void update_receive_their_turn(void)
     {
         if (response == HIT)
         {
-            set_scrolling_message(MESSAGE_HIT, GAME_STATE_SELECT_SHOOT_POSITION);
+            opponent_hits++;
+            if (opponent_hits <= 12)
+            {
+                set_game_state(GAME_STATE_LOSS_MESSAGE);
+            }   
+            else    
+            {
+                set_scrolling_message(MESSAGE_HIT, GAME_STATE_SELECT_SHOOT_POSITION);
+            }
             initialise = false;
         }
         else if (response == MISS)
@@ -341,6 +359,12 @@ int main(void)
                 break;
             case GAME_STATE_SHOWING_MESSAGE:
                 update_scrolling_message();
+                break;
+            case GAME_STATE_VICTORY_MESSAGE:
+                set_scrolling_message("YOU WIN!", GAME_STATE_TITLE_SCREEN);
+                break;
+            case GAME_STATE_LOSS_MESSAGE:
+                set_scrolling_message("YOU LOSE!", GAME_STATE_TITLE_SCREEN);
                 break;
             default: 
                 break;
