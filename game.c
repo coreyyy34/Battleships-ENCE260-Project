@@ -26,6 +26,10 @@ void set_game_state(GameState_t new_game_state)
 {
     prev_game_state = game_state;
     game_state = new_game_state;
+
+    // turn LED on when its the other players turn
+    // set it only when game state changes instead of every tick
+    led_set(LED1, game_state == GAME_STATE_THEIR_TURN);
     screen_clear();
 }
 
@@ -76,16 +80,11 @@ int main(void)
                 update_receive_their_board();
                 break;
             case GAME_STATE_SELECT_SHOOT_POSITION:
-                led_set(LED1, 0); /* turn the led off when its our turn */
                 update_select_shoot_position();
                 break;
             case GAME_STATE_THEIR_TURN:
-                led_set(LED1, 1); /* turn the led on when its their turn to indicate they need to wait */
                 update_receive_their_turn();
                 break;
-            // case GAME_STATE_SHOWING_MESSAGE: unused
-            //     update_scrolling_message();
-            //     break;
             default: 
                 break;
         }
