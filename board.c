@@ -105,8 +105,8 @@ BoardResponse_t board_check_our_shot_their_board(uint8_t row, uint8_t col)
 {
     switch ((*their_board)[row][col]) 
     {
-        case SHIP_UNEXPLORED:
             (*their_board)[row][col] = SHIP_EXPLORED;
+            // when they hit a ship cell, check if all of them are now sunk, if so they win.
             return check_all_their_ships_sunk() ? WINNER : HIT;
         case EMPTY_UNEXPLORED:
             (*their_board)[row][col] = EMPTY_EXPLORED;

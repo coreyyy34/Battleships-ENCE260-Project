@@ -223,7 +223,7 @@ void update_select_shoot_position(void)
             break;
     }
 
-    // boundary checks
+    // boundary checks, ensure we don't cause an underflow or try go to a row/col that doesn't exist
     row = (row + row_offset < LEDMAT_ROWS_NUM) ? (row + row_offset >= 0 ? row + row_offset : 0) : LEDMAT_ROWS_NUM - 1;
     col = (col + col_offset < LEDMAT_COLS_NUM) ? (col + col_offset >= 0 ? col + col_offset : 0) : LEDMAT_COLS_NUM - 1;
 

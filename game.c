@@ -53,6 +53,7 @@ void set_game_state(GameState_t new_game_state)
     led_set(LED1, game_state == GAME_STATE_THEIR_TURN);
     screen_clear();
 
+    // when the game ends, free the boards where were dynamically allocated.
     if (game_state == GAME_STATE_END)
     {
         delete_boards();

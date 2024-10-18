@@ -119,13 +119,13 @@ void update_choose_board(void)
             break;
     }
 
+    // when the player pushes the button here, they confirm their board selection
     if (button_push_event_p (0))
     {
         // setup our board and send the predefined board to the other board
         our_board = create_board(PREDEFINED_BOARDS[board_num]);
         our_predefined_board_id = board_num;
         set_game_state(GAME_STATE_AWAIT_BOARD_EXCHANGE);
-
         ir_send_our_predefined_board_id(our_predefined_board_id);
         
         sent_our_board = true;
