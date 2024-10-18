@@ -24,9 +24,6 @@
 #include "setup_manager.h"     /** Handles game states SELECT_PLAYER, CHOOSE_BOARD, AWAIT_BOARD_EXCHANGE */
 #include "board_manager.h"     /** Handles game states THEIR_TURN, SELECT_SHOOT_POSITION,  */
 
-/** @brief The previous game state. */
-static GameState_t prev_game_state;
-
 /** @brief The current game state. */
 static GameState_t game_state;
 
@@ -49,13 +46,17 @@ uint8_t player_number;
  */
 void set_game_state(GameState_t new_game_state)
 {
-    prev_game_state = game_state;
     game_state = new_game_state;
 
     // turn LED on when its the other players turn
     // set it only when game state changes instead of every tick
     led_set(LED1, game_state == GAME_STATE_THEIR_TURN);
     screen_clear();
+
+    if (game_state == GAME_STATE_END)
+    {
+        delete_boards();
+    }
 }
 
 /**
@@ -76,7 +77,6 @@ int main(void)
     led_init();
 
     // initialise states
-    prev_game_state = GAME_STATE_TITLE_SCREEN;
     game_state = GAME_STATE_TITLE_SCREEN;
     received_their_board = false;
     sent_our_board = false;
@@ -117,6 +117,8 @@ int main(void)
                 break;
             case GAME_STATE_THEIR_TURN:
                 update_receive_their_turn();
+                break;
+            case GAME_STATE_END:
                 break;
             default: 
                 break;
