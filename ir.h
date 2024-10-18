@@ -1,6 +1,8 @@
-/** @file   ir.c
- *  @author Corey Hines
- *  @date   17/10/2024
+/** 
+ * @file   ir.h
+ * @brief  Header of IR communication functions for the Battleship game.
+ * @author Corey Hines
+ * @date   17/10/2024
  */
 
 #ifndef IR_H

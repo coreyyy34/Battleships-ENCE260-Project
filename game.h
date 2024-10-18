@@ -1,6 +1,8 @@
-/** @file   game.h
- *  @author Corey Hines
- *  @date   17/10/2024
+/**
+ * @file   game.h
+ * @brief  Header of the Battleship containing state management.
+ * @date   17/10/2024
+ * @author Corey Hines
  */
 
 #ifndef GAME_H

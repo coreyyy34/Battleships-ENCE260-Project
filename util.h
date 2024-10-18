@@ -1,4 +1,5 @@
 /** @file   utils.h
+ *  @brief  Utility macros for common operations.
  *  @author Corey Hines
  *  @date   17/10/2024
  */

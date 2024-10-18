@@ -1,6 +1,8 @@
-/** @file   board_manager.c
- *  @author Corey Hines
- *  @date   17/10/2024
+/** 
+ * @file   board_manager.h
+ * @brief  Header of board management functions for the Battleship game.
+ * @author Corey Hines
+ * @date   17/10/2024
  */
 
 #ifndef BOARD_MANAGER_H

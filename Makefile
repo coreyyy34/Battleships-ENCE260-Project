@@ -1,5 +1,5 @@
 # File:   Makefile
-# Author: M. P. Hayes, UCECE
+# Author: M. P. Hayes, UCECE, Corey Hines
 # Date:   12 Sep 2010
 # Descr:  Makefile for game
 
@@ -12,8 +12,7 @@ DEL = rm
 
 # Source files
 # Do not include header files here if they do not have an implementation
-# as they will be injected into the using class if they are using and
-# will cause make to fail.
+# as they will be injected using 'define'
 SRC = game.c \
       ../../drivers/button.c \
       ../../drivers/avr/ir_uart.c \

@@ -1,19 +1,33 @@
-/** @file   setup_manager.c
- *  @author Corey Hines
- *  @date   17/10/2024
+/** 
+ * @file   setup_manager.c
+ * @brief  Implementation of game setup management functions.
+ *
+ * This file contains the implementation of functions for managing the setup phase
+ * of the Battleship game. It includes functions for selecting the player, receiving
+ * the opponent's board, and choosing a board configuration during the game setup phase.
+ *
+ * @date   17/10/2024
+ * @author Corey Hines
  */
 
-#include "setup_manager.h"
 #include <stdbool.h>
+#include "setup_manager.h"
 #include "navigation_switch.h"
 #include "screen.h"
-#include "button.h" /* todo - turn this into our own module*/
+#include "button.h"
 #include "ir.h"
 #include "game_state.h"
 #include "board.h"
 #include "predefined_boards.h"
 #include "game.h"
 
+/**
+ * @brief Updates the player selection process.
+ *
+ * This function handles the logic for selecting the player (player 1 or player 2)
+ * during the game setup phase. It updates the display to show the selected player
+ * and changes the game state when a selection is made.
+ */
 void update_select_player(void)
 {
     static bool initialised = false;
@@ -48,6 +62,13 @@ void update_select_player(void)
     }
 }
 
+/**
+ * @brief Updates to check if the other player has sent their board.
+ *
+ * This function checks if the predefined board ID from the opponent has been received
+ * via IR communication. If the board is received, it creates the opponent's board and
+ * updates the game state accordingly.
+ */
 void update_receive_their_board(void)
 {
     if (!received_their_board)
@@ -64,9 +85,16 @@ void update_receive_their_board(void)
     }
 }
 
+/**
+ * @brief Updates the choose board process.
+ *
+ * This function handles the logic for the player selecting a board during the game setup phase.
+ * It updates the display to show the selected predefined board and changes the game state when
+ * a board is chosen.
+ */
 void update_choose_board(void)
 {
-static bool initialised = false;
+    static bool initialised = false;
     static uint8_t board_num = 0;
 
     if (!initialised)

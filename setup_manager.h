@@ -1,6 +1,8 @@
-/** @file   setup_manager.h
- *  @author Corey Hines
- *  @date   17/10/2024
+/** 
+ * @file   setup_manager.h
+ * @brief  Header of game setup management functions.
+ * @author Corey Hines
+ * @date   17/10/2024
  */
 
 #ifndef PLAYER_MANAGEMENT_H

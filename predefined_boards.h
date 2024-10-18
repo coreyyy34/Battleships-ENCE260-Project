@@ -1,6 +1,8 @@
-/** @file   predefined_boards.h
- *  @author Corey Hines
- *  @date   17/10/2024
+/** 
+ * @file   predefined_boards.h
+ * @brief  Header of predefined board configurations for the Battleship game.
+ * @author Corey Hines
+ * @date   17/10/2024
  */
 
 #ifndef PREDEFINED_BOARDS_H

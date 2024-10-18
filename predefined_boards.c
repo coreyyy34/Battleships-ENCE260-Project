@@ -1,6 +1,15 @@
-/** @file   predefined_boards.c
- *  @author Corey Hines, Ethan Field
- *  @date   17/10/2024
+/** 
+ * @file   predefined_boards.c
+ * @brief  Implementation of predefined board configurations for the Battleship game.
+ *
+ * This file contains the implementation of predefined board configurations used
+ * in the Battleship game. Each board configuration is defined as a constant and
+ * can be referenced throughout the game to set up different board layouts. The
+ * file also includes an array of pointers to these board configurations and a
+ * count of the total number of boards available.
+ *
+ * @date   17/10/2024
+ * @author Corey Hines, Ethan Field
  */
 
 #include "predefined_boards.h"
@@ -92,5 +101,9 @@ const PredefinedBoard_t *PREDEFINED_BOARDS[] = {
 
 /**
  * @brief Total number of predefined boards available.
+ * 
+ * This is calculated dynamically by dividing the size of the
+ * predefined boards array (which is an array of pointers) by
+ * the size of a pointer.
  */
 const uint8_t NUM_BOARDS = sizeof(PREDEFINED_BOARDS) / sizeof(PredefinedBoard_t *);

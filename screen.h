@@ -1,6 +1,8 @@
-/** @file   screen.h
- *  @author Corey Hines
- *  @date   17/10/2024
+/** 
+ * @file   screen.h
+ * @brief  Header of the screen functions for the LED matrix display.
+ * @author Corey Hines
+ * @date   17/10/2024
  */
 
 #ifndef SCREEN_H
@@ -21,7 +23,16 @@
 #define MESSAGE_WINNER " YOU WON! " // Message displayed when the player wins
 #define MESSAGE_LOSER " YOU LOST! " // Message displayed when the player loses
 
+/**
+ * @brief Checks if a scrolling message is currently active.
+ * @return True if a scrolling message is active, false otherwise.
+ */
 bool screen_scrolling_message_active(void);
+
+/**
+ * @brief Updates the scrolling message display.
+ */
+void screen_scrolling_message_update(void);
 
 /**
  * @brief Updates the LED matrix display. This should be called regularly to refresh the screen.
@@ -63,7 +74,5 @@ void screen_set_predefined_board(const PredefinedBoard_t* board);
  * @param value The pixel value (on or off).
  */
 void screen_set_pixel(uint8_t col, uint8_t row, tinygl_pixel_value_t value);
-
-void screen_scrolling_message_update(void);
 
 #endif /* SCREEN_H */

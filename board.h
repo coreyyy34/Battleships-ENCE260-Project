@@ -1,6 +1,8 @@
-/** @file   board.h
- *  @author Corey Hines
- *  @date   17/10/2024
+/** 
+ * @file   board.h
+ * @brief  Header of the game board management functions.
+ * @date   17/10/2024
+ * @author Corey Hines
  */
 
 #ifndef BOARD_H
@@ -63,12 +65,16 @@ void delete_boards(void);
  */
 BoardResponse_t board_check_our_shot_their_board(uint8_t row, uint8_t col);
 
-// Global variables representing our and their boards.
+/** @brief Pointer to the player's game board. */
 extern Board_t* our_board;
+
+/** @brief Pointer to the opponent's game board. */
 extern Board_t* their_board;
 
-// Global variables representing predefined board IDs for our and their boards.
+/** @brief Predefined board ID for the player's board. */
 extern uint8_t our_predefined_board_id;
+
+/** @brief Predefined board ID for the opponent's board. */
 extern uint8_t their_predefined_board_id;
 
 #endif /* BOARD_H */

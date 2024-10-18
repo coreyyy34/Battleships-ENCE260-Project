@@ -1,6 +1,8 @@
-/** @file   navigation_switch.h
- *  @author Corey Hines
- *  @date   17/10/2024
+/** 
+ * @file   navigation_switch.h
+ * @brief  Header of navigation switch functions.
+ * @author Corey Hines
+ * @date   17/10/2024
  */
 
 #ifndef NAVIGATION_SWITCH_H

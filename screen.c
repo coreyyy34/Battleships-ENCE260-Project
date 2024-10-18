@@ -1,17 +1,32 @@
-/** @file   screen.c
- *  @author Corey Hines
- *  @date   17/10/2024
+/** 
+ * @file   screen.c
+ * @brief  Implementation of the screen functions for the LED matrix display.
+ * 
+ * This file contains the function implementations for managing and updating the
+ * LED matrix display, including displaying scrolling messages, single characters,
+ * predefined boards, and individual pixels.
+ * 
+ * @date   17/10/2024
+ * @author Corey Hines
  */
+
 
 #include <string.h>
 #include "screen.h"
 #include "game.h"   /* For PACER_RATE */
 
+/** @brief Number of ticks remaining for an active scrolling message. */
 static uint32_t scrolling_message_ticks = 0;
+
+/** @brief Flag indicating if a scrolling message is active. */
 static bool scrolling_message_active = false;
 
 /**
  * @brief Calculates the number of ticks required to scroll a message.
+ * 
+ * This function calculates the number of ticks required to scroll a message
+ * based on the message length and the configured message rate.
+ * 
  * @param text The message text to be scrolled.
  * @return The calculated number of ticks for scrolling the message.
  */
@@ -24,11 +39,29 @@ static uint32_t screen_calculate_scrolling_message_ticks(const char* text)
     return (uint32_t) (message_cols / cols_per_tick);
 }
 
+/**
+ * @brief Calculates the number of ticks required to scroll a message.
+ * 
+ * This function calculates the number of ticks required to scroll a message
+ * based on the message length and the configured message rate.
+ * 
+ * @param text The message text to be scrolled.
+ * @return The calculated number of ticks for scrolling the message.
+ */
 bool screen_scrolling_message_active(void)
 {
     return scrolling_message_active;
 }
 
+/**
+ * @brief Sets the scrolling message to be displayed on the screen.
+ * 
+ * This function sets a new scrolling message to be displayed on the screen.
+ * It clears the screen, calculates the required ticks, and initializes the
+ * scrolling message display.
+ * 
+ * @param text The message to be displayed.
+ */
 void screen_set_scrolling_text(const char* text)
 {
     screen_clear();  // Clear the screen before setting a new message.
@@ -39,6 +72,13 @@ void screen_set_scrolling_text(const char* text)
     tinygl_text(text);
 }
 
+/**
+ * @brief Displays a single character on the screen.
+ * 
+ * This function displays a single character on the screen in step mode.
+ * 
+ * @param character The character to be displayed.
+ */
 void screen_set_char(char character)
 {
     char text[2] = {character, '\0'}; 
@@ -47,6 +87,14 @@ void screen_set_char(char character)
     tinygl_text(text);
 }
 
+/**
+ * @brief Displays a predefined board layout on the LED matrix.
+ * 
+ * This function displays a predefined board layout on the LED matrix by iterating
+ * through the rows and columns of the board and setting the corresponding pixels.
+ * 
+ * @param board A pointer to the predefined board structure.
+ */
 void screen_set_predefined_board(const PredefinedBoard_t* board)
 {
     screen_clear();
@@ -63,12 +111,28 @@ void screen_set_predefined_board(const PredefinedBoard_t* board)
     }
 }
 
+/**
+ * @brief Sets a pixel on the LED matrix to the specified value.
+ * 
+ * This function sets a specific pixel on the LED matrix to the given value
+ * (on or off).
+ * 
+ * @param col The column index of the pixel.
+ * @param row The row index of the pixel.
+ * @param value The pixel value (on or off).
+ */
 void screen_set_pixel(uint8_t col, uint8_t row, tinygl_pixel_value_t value)
 {
     tinygl_point_t pos = {col, row};
     tinygl_pixel_set(pos, value);
 }
 
+/**
+ * @brief Updates the scrolling message display.
+ * 
+ * This function updates the state of the scrolling message display, decreasing
+ * the tick count and checking if the message has finished scrolling.
+ */
 void screen_scrolling_message_update(void)
 {
     if (scrolling_message_ticks > 0) {
@@ -80,17 +144,35 @@ void screen_scrolling_message_update(void)
     }
 }
 
+/**
+ * @brief Updates the LED matrix display.
+ * 
+ * This function updates the LED matrix including the internal state of a scrolling
+ * message which is handled in the tinygl module.
+ */
 void screen_update(void)
 {
     tinygl_update();
 }
 
+/**
+ * @brief Clears the LED matrix, removing all displayed content.
+ * 
+ * This function clears the LED matrix, removing any content that is currently
+ * displayed.
+ */
 void screen_clear(void)
 {
     screen_init();
     tinygl_clear();
 }
 
+/**
+ * @brief Clears the LED matrix, removing all displayed content.
+ * 
+ * This function clears the LED matrix, removing any content that is currently
+ * displayed.
+ */
 void screen_init(void)
 {
     tinygl_init(PACER_RATE);

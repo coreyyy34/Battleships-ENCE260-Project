@@ -1,3 +1,15 @@
+/** 
+ * @file   board_manager.c
+ * @brief  Implementation of board management functions for the Battleship game.
+ *
+ * This file contains the implementation of functions for handling the board 
+ * management in the Battleship game. It includes functions to update the game 
+ * state based on the opponent's actions and the player's cell selection.
+ *
+ * @date   17/10/2024
+ * @author Corey Hines
+ */
+
 #include "board_manager.h"
 #include "board.h"
 #include "screen.h"
@@ -8,6 +20,17 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+
+/**
+ * @brief Updates the display of explored cells.
+ *
+ * This function toggles the display of explored cells on the opponent's 
+ * board at regular intervals. It ensures that the explored cells are 
+ * highlighted appropriately while excluding the currently selected cell.
+ *
+ * @param row The row index of the currently selected cell.
+ * @param col The column index of the currently selected cell.
+ */
 static void update_showing_explored_cells(uint8_t row, uint8_t col)
 {
     static bool initialised;
@@ -47,6 +70,15 @@ static void update_showing_explored_cells(uint8_t row, uint8_t col)
     }
 }
 
+/**
+ * @brief Updates the display of the cursor.
+ *
+ * This function toggles the display of the cursor at the currently selected 
+ * cell at regular intervals, creating a blinking effect.
+ *
+ * @param row The row index of the currently selected cell.
+ * @param col The column index of the currently selected cell.
+ */
 static void update_showing_cursor(uint8_t row, uint8_t col)
 {
     static bool initialised;
@@ -68,6 +100,13 @@ static void update_showing_cursor(uint8_t row, uint8_t col)
     }
 }
 
+/**
+ * @brief Updates to check if the other player has sent their turn.
+ *
+ * This function checks if the opponent's turn has been received via IR 
+ * communication. If a valid response is received, the game state is updated 
+ * to the next phase. If not, it continues to wait.
+ */
 void update_receive_their_turn(void)
 {
     static uint8_t ticks = 0;
@@ -80,7 +119,8 @@ void update_receive_their_turn(void)
     }
 
     // wait 250 ticks (~0.5 seconds) before trying to receive their response
-    // as there are troubles with receiving our own signal
+    // as there are troubles with receiving our own signal even when the 
+    // internal ir driver waits then accepts their own signal if received.
     if (ticks != 250) {
         ticks++;
         return;
@@ -110,6 +150,13 @@ void update_receive_their_turn(void)
     }
 }
 
+/**
+ * @brief Updates the cell selection process where the user selects a cell to send a shot.
+ *
+ * This function handles the logic for selecting a cell to fire a shot at. It updates the 
+ * selected cell based on user input from the navigation switch and sends the shot result 
+ * to the opponent via IR communication.
+ */
 void update_select_shoot_position(void)
 {
     static bool initialised = false;
